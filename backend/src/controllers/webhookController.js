@@ -1,79 +1,97 @@
-import { buildFallbackText, buildMainMenuText, buildServiceText, findService, normalizeText } from '../utils/menu.js';
+import {
+  buildFallbackText,
+  buildMainMenuText,
+  buildServiceText,
+  findService,
+  normalizeText
+} from '../utils/menu.js';
+
 import { upsertLead } from '../services/leadService.js';
-<<<<<<< HEAD
-import { sendInstagramText, sendWhatsAppMainMenu, sendWhatsAppServiceMenu, sendWhatsAppText } from '../services/metaService.js';
+import {
+  sendInstagramText,
+  sendWhatsAppMainMenu,
+  sendWhatsAppServiceMenu,
+  sendWhatsAppText
+} from '../services/metaService.js';
 import { askRiseNextAI } from '../services/openaiService.js';
 import { company } from '../config/company.js';
-=======
-import { sendInstagramText, sendWhatsAppText } from '../services/metaService.js';
->>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 
 export function verifyWebhook(req, res) {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
-  if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) return res.status(200).send(challenge);
+
+  if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
+    return res.status(200).send(challenge);
+  }
+
   return res.sendStatus(403);
 }
 
 export async function handleWebhook(req, res) {
   res.sendStatus(200);
+
   try {
     const body = req.body;
-    if (body.object === 'whatsapp_business_account') await handleWhatsApp(body);
-    if (body.object === 'instagram') await handleInstagram(body);
+
+    if (body.object === 'whatsapp_business_account') {
+      await handleWhatsApp(body);
+    }
+
+    if (body.object === 'instagram') {
+      await handleInstagram(body);
+    }
   } catch (error) {
     console.error('Webhook processing error:', error.response?.data || error.message);
   }
 }
 
-<<<<<<< HEAD
 function getWhatsAppIncoming(message) {
   if (message.type === 'interactive') {
     return {
-      text: message.interactive?.list_reply?.title || message.interactive?.button_reply?.title || '',
-      selectedId: message.interactive?.list_reply?.id || message.interactive?.button_reply?.id || ''
+      text:
+        message.interactive?.list_reply?.title ||
+        message.interactive?.button_reply?.title ||
+        '',
+      selectedId:
+        message.interactive?.list_reply?.id ||
+        message.interactive?.button_reply?.id ||
+        ''
     };
   }
-  return { text: message.text?.body || '', selectedId: '' };
+
+  return {
+    text: message.text?.body || '',
+    selectedId: ''
+  };
 }
 
-=======
->>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 async function handleWhatsApp(body) {
   for (const entry of body.entry || []) {
     for (const change of entry.changes || []) {
       const value = change.value || {};
       const contact = value.contacts?.[0];
       const message = value.messages?.[0];
-<<<<<<< HEAD
+
       if (!message) continue;
 
       const from = message.from;
       const { text, selectedId } = getWhatsAppIncoming(message);
       const normalized = normalizeText(text);
-      const serviceKey = selectedId.startsWith('service_') ? selectedId.replace('service_', '') : '';
-      const service = company.services.find((s) => s.key === serviceKey) || findService(text);
-=======
-      if (!message || message.type !== 'text') continue;
 
-      const from = message.from;
-      const text = message.text?.body || '';
-      const service = findService(text);
-      const normalized = normalizeText(text);
-      const reply = normalized === 'hi' || normalized === 'hello' || normalized === 'menu'
-        ? buildMainMenuText()
-        : service
-          ? buildServiceText(service)
-          : buildFallbackText();
->>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
+      const serviceKey = selectedId.startsWith('service_')
+        ? selectedId.replace('service_', '')
+        : '';
+
+      const service =
+        company.services.find((s) => s.key === serviceKey) ||
+        findService(text);
 
       await upsertLead({
         channel: 'whatsapp',
         customerId: from,
         name: contact?.profile?.name,
         phone: from,
-<<<<<<< HEAD
         incomingText: text || selectedId,
         selectedService: service?.label,
         payload: message
@@ -82,7 +100,10 @@ async function handleWhatsApp(body) {
       if (['hi', 'hello', 'menu', 'start'].includes(normalized)) {
         await sendWhatsAppMainMenu(from);
       } else if (selectedId === 'talk_team' || normalized.includes('talk')) {
-        await sendWhatsAppText(from, `Thank you. Our Rise Next team will contact you shortly.\n\nCall: ${company.phone}\nEmail: ${company.email}\nWebsite: ${company.website}`);
+        await sendWhatsAppText(
+          from,
+          `Thank you. Our Rise Next team will contact you shortly.\n\nCall: ${company.phone}\nEmail: ${company.email}\nWebsite: ${company.website}`
+        );
       } else if (service) {
         await sendWhatsAppServiceMenu(from, service);
       } else if (process.env.OPENAI_API_KEY) {
@@ -91,13 +112,6 @@ async function handleWhatsApp(body) {
       } else {
         await sendWhatsAppText(from, buildFallbackText());
       }
-=======
-        incomingText: text,
-        selectedService: service?.label,
-        payload: message
-      });
-      await sendWhatsAppText(from, reply);
->>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
     }
   }
 }
@@ -107,23 +121,19 @@ async function handleInstagram(body) {
     for (const event of entry.messaging || []) {
       const senderId = event.sender?.id;
       const text = event.message?.text || event.postback?.payload || '';
+
       if (!senderId || !text) continue;
 
       const service = findService(text);
       const normalized = normalizeText(text);
-<<<<<<< HEAD
+
       const reply = ['hi', 'hello', 'menu', 'start'].includes(normalized)
         ? buildMainMenuText()
         : service
           ? buildServiceText(service)
-          : await askRiseNextAI(text);
-=======
-      const reply = normalized === 'hi' || normalized === 'hello' || normalized === 'menu'
-        ? buildMainMenuText()
-        : service
-          ? buildServiceText(service)
-          : buildFallbackText();
->>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
+          : process.env.OPENAI_API_KEY
+            ? await askRiseNextAI(text)
+            : buildFallbackText();
 
       await upsertLead({
         channel: 'instagram',
@@ -133,6 +143,7 @@ async function handleInstagram(body) {
         selectedService: service?.label,
         payload: event
       });
+
       await sendInstagramText(senderId, reply);
     }
   }
