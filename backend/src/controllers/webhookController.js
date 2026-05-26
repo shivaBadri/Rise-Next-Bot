@@ -1,8 +1,12 @@
 import { buildFallbackText, buildMainMenuText, buildServiceText, findService, normalizeText } from '../utils/menu.js';
 import { upsertLead } from '../services/leadService.js';
+<<<<<<< HEAD
 import { sendInstagramText, sendWhatsAppMainMenu, sendWhatsAppServiceMenu, sendWhatsAppText } from '../services/metaService.js';
 import { askRiseNextAI } from '../services/openaiService.js';
 import { company } from '../config/company.js';
+=======
+import { sendInstagramText, sendWhatsAppText } from '../services/metaService.js';
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 
 export function verifyWebhook(req, res) {
   const mode = req.query['hub.mode'];
@@ -23,6 +27,7 @@ export async function handleWebhook(req, res) {
   }
 }
 
+<<<<<<< HEAD
 function getWhatsAppIncoming(message) {
   if (message.type === 'interactive') {
     return {
@@ -33,12 +38,15 @@ function getWhatsAppIncoming(message) {
   return { text: message.text?.body || '', selectedId: '' };
 }
 
+=======
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 async function handleWhatsApp(body) {
   for (const entry of body.entry || []) {
     for (const change of entry.changes || []) {
       const value = change.value || {};
       const contact = value.contacts?.[0];
       const message = value.messages?.[0];
+<<<<<<< HEAD
       if (!message) continue;
 
       const from = message.from;
@@ -46,12 +54,26 @@ async function handleWhatsApp(body) {
       const normalized = normalizeText(text);
       const serviceKey = selectedId.startsWith('service_') ? selectedId.replace('service_', '') : '';
       const service = company.services.find((s) => s.key === serviceKey) || findService(text);
+=======
+      if (!message || message.type !== 'text') continue;
+
+      const from = message.from;
+      const text = message.text?.body || '';
+      const service = findService(text);
+      const normalized = normalizeText(text);
+      const reply = normalized === 'hi' || normalized === 'hello' || normalized === 'menu'
+        ? buildMainMenuText()
+        : service
+          ? buildServiceText(service)
+          : buildFallbackText();
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 
       await upsertLead({
         channel: 'whatsapp',
         customerId: from,
         name: contact?.profile?.name,
         phone: from,
+<<<<<<< HEAD
         incomingText: text || selectedId,
         selectedService: service?.label,
         payload: message
@@ -69,6 +91,13 @@ async function handleWhatsApp(body) {
       } else {
         await sendWhatsAppText(from, buildFallbackText());
       }
+=======
+        incomingText: text,
+        selectedService: service?.label,
+        payload: message
+      });
+      await sendWhatsAppText(from, reply);
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
     }
   }
 }
@@ -82,11 +111,19 @@ async function handleInstagram(body) {
 
       const service = findService(text);
       const normalized = normalizeText(text);
+<<<<<<< HEAD
       const reply = ['hi', 'hello', 'menu', 'start'].includes(normalized)
         ? buildMainMenuText()
         : service
           ? buildServiceText(service)
           : await askRiseNextAI(text);
+=======
+      const reply = normalized === 'hi' || normalized === 'hello' || normalized === 'menu'
+        ? buildMainMenuText()
+        : service
+          ? buildServiceText(service)
+          : buildFallbackText();
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 
       await upsertLead({
         channel: 'instagram',

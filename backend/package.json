@@ -15,10 +15,18 @@
     "express": "^4.21.2",
     "helmet": "^8.0.0",
     "mongoose": "^8.9.5",
+<<<<<<< HEAD
     "morgan": "^1.10.0",
     "openai": "^4.77.0"
+=======
+    "morgan": "^1.10.0"
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9

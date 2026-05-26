@@ -1,10 +1,14 @@
 import axios from 'axios';
 import { addOutgoingMessage } from './leadService.js';
+<<<<<<< HEAD
 import { company } from '../config/company.js';
+=======
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 
 const graphVersion = process.env.META_GRAPH_VERSION || 'v21.0';
 const graphBase = `https://graph.facebook.com/${graphVersion}`;
 
+<<<<<<< HEAD
 function whatsappConfig() {
   const token = process.env.WHATSAPP_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
@@ -27,6 +31,17 @@ async function sendWhatsAppPayload(to, payload, outText = '') {
 export async function sendWhatsAppText(to, text) {
   return sendWhatsAppPayload(
     to,
+=======
+export async function sendWhatsAppText(to, text) {
+  const token = process.env.WHATSAPP_TOKEN;
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  if (!token || !phoneNumberId || token.includes('PASTE_')) {
+    console.log('ℹ️ WhatsApp token not configured. Mock reply:', { to, text });
+    return { mocked: true };
+  }
+  const res = await axios.post(
+    `${graphBase}/${phoneNumberId}/messages`,
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
     {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -34,6 +49,7 @@ export async function sendWhatsAppText(to, text) {
       type: 'text',
       text: { preview_url: false, body: text }
     },
+<<<<<<< HEAD
     text
   );
 }
@@ -92,6 +108,12 @@ export async function sendWhatsAppServiceMenu(to, service) {
     },
     `${service.label} menu sent`
   );
+=======
+    { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+  );
+  await addOutgoingMessage({ channel: 'whatsapp', customerId: to, text, payload: res.data });
+  return res.data;
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
 }
 
 export async function sendInstagramText(recipientId, text) {
@@ -103,7 +125,15 @@ export async function sendInstagramText(recipientId, text) {
   }
   const res = await axios.post(
     `${graphBase}/${pageId}/messages`,
+<<<<<<< HEAD
     { recipient: { id: recipientId }, messaging_type: 'RESPONSE', message: { text } },
+=======
+    {
+      recipient: { id: recipientId },
+      messaging_type: 'RESPONSE',
+      message: { text }
+    },
+>>>>>>> f5ec5ed5f3082bd846769bb3813ef5761e55f7d9
     { params: { access_token: token } }
   );
   await addOutgoingMessage({ channel: 'instagram', customerId: recipientId, text, payload: res.data });
