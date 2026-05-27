@@ -1,25 +1,53 @@
-import { company } from '../config/company.js';
+import { company } from "../config/company.js";
 
-export function normalizeText(text = '') {
-  return text.trim().toLowerCase();
-}
-
-export function findService(input = '') {
-  const text = normalizeText(input);
-  const numberMap = ['technology', 'bpo', 'creative', 'marketing', 'hiring'];
-  if (/^[1-5]$/.test(text)) return company.services.find((s) => s.key === numberMap[Number(text) - 1]);
-  return company.services.find((s) => text.includes(s.key) || text.includes(s.label.toLowerCase().split(' ')[0]));
+export function normalizeText(text = "") {
+  return text.toString().trim().toLowerCase();
 }
 
 export function buildMainMenuText() {
-  return `Welcome to ${company.name} 👋\n${company.intro}\n\nPlease choose a service:\n\n1. Technology Solutions\n2. BPO & Operations\n3. VN Studios / Creative\n4. Digital Marketing\n5. Hiring & Staffing\n\nReply with a number or type your requirement.\n\nContact: ${company.phone}\nWebsite: ${company.website}`;
-}
+  return `👋 Welcome to Rise Next Solutions!
 
-export function buildServiceText(service) {
-  const points = service.options.map((item, index) => `${index + 1}. ${item}`).join('\n');
-  return `${service.label}\n\n${service.details}\n\nWe offer:\n${points}\n\nPlease share your name, company and requirement. Our team will contact you shortly.`;
+Please select a service from the menu:
+
+📈 Digital Marketing
+🎬 RN Studio
+💻 Technology Solutions
+📞 BPO Services
+👨‍💼 Hiring & Staffing
+💰 Loan & Financing Assistance
+📞 Talk To Us`;
 }
 
 export function buildFallbackText() {
-  return `Thanks for contacting ${company.name}. Please reply with:\n1 for Technology\n2 for BPO\n3 for VN Studios\n4 for Digital Marketing\n5 for Hiring\n\nOr type your requirement directly.`;
+  return buildMainMenuText();
+}
+
+export function findService(text = "") {
+  const normalized = normalizeText(text);
+
+  return company.services.find((service) => {
+    const serviceKey = service.key.replaceAll("_", " ");
+    const cleanLabel = service.label
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .trim();
+
+    return (
+      normalized.includes(serviceKey) ||
+      normalized.includes(cleanLabel) ||
+      service.options.some((option) =>
+        normalized.includes(option.toLowerCase())
+      )
+    );
+  });
+}
+
+export function buildServiceText(service) {
+  if (!service) return buildMainMenuText();
+
+  return `${service.label}
+
+${service.details}
+
+Please select one option from the list below.`;
 }
