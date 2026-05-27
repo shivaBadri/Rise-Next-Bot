@@ -66,6 +66,20 @@ function getWhatsAppIncoming(message) {
   };
 }
 
+function thankYouMessage() {
+  return `✅ Thank you for contacting Rise Next Solutions.
+
+Your request has been successfully registered.
+
+Our Rise Next team will contact you shortly.
+
+📞 Call: +91 7207409354
+📧 Email: info@risenext.in
+🌐 Website: https://www.risenext.in
+
+Thank you for choosing Rise Next Solutions 🚀`;
+}
+
 async function handleWhatsApp(body) {
   for (const entry of body.entry || []) {
     for (const change of entry.changes || []) {
@@ -83,6 +97,15 @@ async function handleWhatsApp(body) {
         ? selectedId.replace('service_', '')
         : '';
 
+      const optionSelected =
+        selectedId.startsWith('option_') ||
+        normalized.includes('static website') ||
+        normalized.includes('dynamic website') ||
+        normalized.includes('e-commerce') ||
+        normalized.includes('ecommerce') ||
+        normalized.includes('portfolio website') ||
+        normalized.includes('business website');
+
       const service =
         company.services.find((s) => s.key === serviceKey) ||
         findService(text);
@@ -93,17 +116,16 @@ async function handleWhatsApp(body) {
         name: contact?.profile?.name,
         phone: from,
         incomingText: text || selectedId,
-        selectedService: service?.label,
+        selectedService: service?.label || selectedId,
         payload: message
       });
 
       if (['hi', 'hello', 'menu', 'start'].includes(normalized)) {
         await sendWhatsAppMainMenu(from);
       } else if (selectedId === 'talk_team' || normalized.includes('talk')) {
-        await sendWhatsAppText(
-          from,
-          `Thank you. Our Rise Next team will contact you shortly.\n\nCall: ${company.phone}\nEmail: ${company.email}\nWebsite: ${company.website}`
-        );
+        await sendWhatsAppText(from, thankYouMessage());
+      } else if (optionSelected) {
+        await sendWhatsAppText(from, thankYouMessage());
       } else if (service) {
         await sendWhatsAppServiceMenu(from, service);
       } else if (process.env.OPENAI_API_KEY) {
