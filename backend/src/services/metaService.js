@@ -104,7 +104,7 @@ export async function sendWhatsAppServiceMenu(to, service) {
   const rows = service.options.slice(0, 9).map((option, index) => ({
     id: `option_${service.key}_${index + 1}`,
     title: option.slice(0, 24),
-    description: 'Select this requirement'
+    description: 'Tap to continue'
   }));
 
   rows.push({
