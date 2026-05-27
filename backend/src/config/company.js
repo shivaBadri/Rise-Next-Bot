@@ -8,23 +8,21 @@ export const company = {
     {
       key: "digital_marketing",
       label: "📈 Digital Marketing",
-      details: "Grow your brand visibility, generate leads, and improve online reach with Rise Next digital marketing support.",
+      details: "Ads, SEO, social media and lead generation.",
       options: [
         "Meta Ads",
         "Google Ads",
         "SEO Services",
         "Social Media Marketing",
-        "Lead Generation Campaigns",
+        "Lead Generation",
         "Brand Promotion",
-        "Content Marketing",
         "Monthly Marketing Package"
       ]
     },
-
     {
       key: "rn_studio",
       label: "🎬 RN Studio",
-      details: "Creative media, video, photography, and content production services for businesses and personal brands.",
+      details: "Videos, reels, shoots and creative content.",
       options: [
         "Video Editing",
         "Photography",
@@ -32,15 +30,13 @@ export const company = {
         "Reels Creation",
         "Graphic Design",
         "Content Creation",
-        "Brand Shoot",
-        "Podcast / Studio Support"
+        "Podcast Support"
       ]
     },
-
     {
       key: "technology",
       label: "💻 Technology Solutions",
-      details: "Professional technology solutions including websites, applications, dashboards, automation, and digital platforms.",
+      details: "Websites, apps, dashboards and automation.",
       options: [
         "Static Website",
         "Dynamic Website",
@@ -54,11 +50,10 @@ export const company = {
         "Admin Dashboard"
       ]
     },
-
     {
       key: "bpo",
       label: "📞 BPO Services",
-      details: "Business process outsourcing support including calling, customer service, data entry, and back-office operations.",
+      details: "Calling, support, data entry and back-office services.",
       options: [
         "Inbound Calling",
         "Outbound Calling",
@@ -70,11 +65,10 @@ export const company = {
         "Dedicated BPO Team Setup"
       ]
     },
-
     {
       key: "hiring",
       label: "👨‍💼 Hiring & Staffing",
-      details: "Recruitment and staffing assistance for IT, non-IT, telecalling, operations, and bulk hiring requirements.",
+      details: "IT, Non-IT, Telecalling and bulk hiring services.",
       options: [
         "Permanent Hiring",
         "Contract Staffing",
@@ -86,11 +80,10 @@ export const company = {
         "Internship Hiring"
       ]
     },
-
     {
       key: "finance",
       label: "💰 Loan & Financing Assistance",
-      details: "Loan and financial assistance support for individuals, businesses, and customers seeking suitable finance options.",
+      details: "Loan and finance assistance for customers.",
       options: [
         "Personal Loans",
         "Business Loans",
@@ -102,11 +95,10 @@ export const company = {
         "Finance Consultation"
       ]
     },
-
     {
       key: "talk_team",
       label: "📞 Talk To Us",
-      details: "Connect directly with the Rise Next team for quick support, project discussion, or callback request.",
+      details: "Connect directly with the Rise Next team.",
       options: [
         "Request Callback",
         "Talk to Sales Team",
